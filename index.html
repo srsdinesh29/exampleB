@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Example B — Explainable AI Evaluation</title>
+    <style>
+        body { font-family: Arial; max-width: 700px; margin: auto; padding: 20px; }
+        img { width: 100%; max-width: 600px; border: 1px solid #ccc; margin-bottom: 20px; }
+        .section { margin-bottom: 25px; }
+        label { display: block; margin-top: 10px; }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>AI DETECTION WITH EXPLAINABILITY</h2>
+    <p>This page shows AI-generated detection with bounding boxes and confidence scores.</p>
+
+    <div class="section">
+        <img src="original.png" alt="original.png">
+        <img src="exampleB.png" alt="exampleB.png">
+        <p><strong>AI Count:</strong> <span id="aiCount">13</span></p>
+    </div>
+
+    <form id="responseForm">
+
+        <h3>Participant Information</h3>
+        <label>First Name:
+            <input type="text" name="firstName" required>
+        </label>
+
+        <label>Last Name:
+            <input type="text" name="lastName" required>
+        </label>
+
+        <h3>Checklist</h3>
+
+        <label>Did the AI detect all red circles?</label>
+        <label><input type="radio" name="detectAll" value="Yes"> Yes</label>
+        <label><input type="radio" name="detectAll" value="No"> No</label>
+
+        <label>Did the AI detect any non-red or other shape objects?</label>
+        <label><input type="radio" name="detectOthers" value="Yes"> Yes</label>
+        <label><input type="radio" name="detectOthers" value="No"> No</label>
+
+        <label>Do you see bounding boxes around all detected objects?</label>
+        <label><input type="radio" name="boundingBoxes" value="Yes"> Yes</label>
+        <label><input type="radio" name="boundingBoxes" value="No"> No</label>
+
+        <label>Are the confidence scores reasonable?</label>
+        <label><input type="radio" name="confidenceScores" value="Yes"> Yes</label>
+        <label><input type="radio" name="confidenceScores" value="No"> No</label>
+
+        <label>Do you accept the AI-generated count?</label>
+        <label><input type="radio" name="decision" value="Yes"> Yes</label>
+        <label><input type="radio" name="decision" value="No"> No</label>
+
+        <label>If you do NOT accept the AI’s count, what do you believe is the correct count?
+            <input type="number" name="correctCount">
+        </label>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById("responseForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const data = {
+                example: "B", // Helps you separate A vs B in your sheet
+                firstName: document.querySelector("input[name='firstName']").value,
+                lastName: document.querySelector("input[name='lastName']").value,
+
+                detectAll: document.querySelector("input[name='detectAll']:checked")?.value || "",
+                detectOthers: document.querySelector("input[name='detectOthers']:checked")?.value || "",
+                boundingBoxes: document.querySelector("input[name='boundingBoxes']:checked")?.value || "",
+                confidenceScores: document.querySelector("input[name='confidenceScores']:checked")?.value || "",
+                decision: document.querySelector("input[name='decision']:checked")?.value || "",
+
+                correctCount: document.querySelector("input[name='correctCount']").value,
+                aiCount: document.getElementById("aiCount").innerText,
+
+                // CST timestamp
+                timestamp: new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
+            };
+
+            fetch("YOUR_GOOGLE_SCRIPT_URL", {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            alert("Response submitted!");
+        });
+    </script>
+
+</body>
+</html>
